@@ -56,6 +56,12 @@
 - mapDispatchToProps : 액션함수를 연결
 - connect : 이 둘을 묶어준다. 
 
+
+
+#### Proptypes
+
+- 타입을 체크하기 위한 기능
+
 ---
 
 예제는 velopert의 블로그를 참고했음.
