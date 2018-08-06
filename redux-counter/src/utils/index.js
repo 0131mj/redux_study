@@ -15,9 +15,7 @@ export function getRandomColor() {
         '#f76707'
     ];
 
-    // 0 부터 12까지 랜덤 숫자
-    const random = Math.floor(Math.random() * 13);
+    const random = Math.floor(Math.random() * colors.length);
 
-    // 랜덤 색상 반환
     return colors[random];
 }

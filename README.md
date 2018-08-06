@@ -2,10 +2,6 @@
 
 
 
-
-
-
-
 ## 카운터 만들기
 
 
@@ -20,18 +16,125 @@
 
 
 
+### Counter 컴포넌트 
+
+뷰만을 담당하는 컴포넌트로, 아래와 같이 함수와  프로퍼티를 때려넣어서 하나의 엘리먼트를 리턴하도록 만들 수 있다. 
+
+```react
+const Counter = ({number, color, onIncrement, onDecrement, onSetColor}) => {
+    return (
+        <div 
+            className="Counter" 
+            onClick={onIncrement} 
+            onContextMenu={
+                (e) => { 
+                    e.preventDefault(); 
+                    onDecrement();
+                }
+            } 
+            onDoubleClick={onSetColor}
+            style={{backgroundColor: color}}>
+                {number}
+        </div>
+    );
+};
+```
+
+
+
+프롭타입스를 먼저 정의하고, defaultProps를 정의했다. 
+
+#### PropType이란 무엇인가?
+
+내생각에 프롭타입스라는 것은 프롭의 타입이 잘못들어오지 않도록 강제하는 기능 같다. 
+
+##### 사용법
+
+propTypes.object.isRequired
+
+자료형을 먼저 선언해주고, 필수인지를 뒤에 쓴다. 
+
+
+
+#### defaultProps란 무엇인가?
+
+
+
 #### action
 
 - 액션은 하나의 객체이다. 
 - 모든 액션 객체는 type이라는 값을 지니고 있어야 한다. 
 - 여기서 type이란, 일종의 액션을 구분해주는 식별자와 같다.
 
+액션을 만들때 마다 객체를 그때그때 만들기가 힘들다는 말이 무슨말인가?
+
+
+
+##### 액션 타입의 정의 
+
+```javascript
+export const INCREMENT = 'INCREMENT'
+export const DECREMENT = 'DECREMENT'
+```
+
+관례적으로, 액션타입은 대문자로 쓴다. 과연 이게 뭐하는 짓인지, 잘 이해가 가지는 않는데 (그냥 텍스트가 타입이라서)  스트링값을 읽어서 변수명으로 지정해놓고 쫙 넣으면 안되나?
+
+방법이 있는데 eval()을 쓰면된다. 하지만 이걸 매번 쓸수도 없고... 그냥 한번만 더쓰면되니 그냥 귀찮더라도 좀 쓰자. 뭔가 방법이 있을거 같긴하다. SETTER 뭐이런 라이브러리?
+
+이렇게 힘들여서 노가다로 완성시켜 놓은... 타입은 리듀서에서도 또 써먹는다. 
+
+
+
 
 
 #### reuducer
 
 - 리듀서는 액션의 type에 따라 변화를 일으키는 함수이다. 
-- 리듀서에는 초기상태가 정의되어 있어야 한다. 
+- 리듀서에는 초기상태가 정의되어 있어야 한다.  왜??? 리듀서는 '변화'를 일으키는 함수이기 때문이다. 이전 상태가 뭐가되었든 있긴 있어야 바꿀거 아닌가.
+
+```javascript
+import * as types from '../actions/ActionTypes'
+```
+
+이렇게 * 를 써서 부르면 types라는 하나의 객체에 저 액션타입스에 있는 놈들이 객체형태로 다 담긴다. 모든 형식이? 맞나?
+
+##### 리듀서 함수
+
+- state와 action을 파라미터로 가지는 함수,
+- 내부에서 switch 문을 통해 action.type의 상태에 따라 다른 변화를 일으키면 된다. 
+
+```javascript
+import * as types from '../actions/ActionTypes'
+
+const initialState = {
+    color: 'black',
+    number : 0
+};
+
+function counter(state = initialState, action) {
+    switch (action.type) {
+        case types.INCREMENT:
+            return{
+                ...state,
+                number: state.number + 1
+            };
+        case types.DECREMENT:
+            return{
+                ...state,
+                number: state.number - 1
+            };
+        case types.SET_COLOR:
+            return{
+                ...state,
+                color:action.color
+            };
+        default:
+            return state;
+    }
+}
+```
+
+되돌려주는 값은 나머지 스테이트와 변화된 값이다. 
 
 
 
@@ -40,13 +143,36 @@
 - 스토어는 리덕스에서 가장 핵심적인 인스턴스
 - 스토어 안에는 현재 상태를 내장하고 있고, 구독중인 함수들이 상태가 업데이트 될 때마다 다시 실행되게 해줌.
 
+```javascript
+// 리덕스 관련 불러오기
+import { createStore } from 'redux'
+import reducers from './reducers';
+
+const store = createStore(reducers);
+```
+
+리덕스에서 createStore라는 함수를 땡겨온다. 
+
+리듀서도아까 만든 곳에서 땡겨온다. 
+
+근데 문법이... 그냥 폴더 전체에서 reducers라고 땡겨올수도 있나보다. 
+
 
 
 #### provider
 
 - 프로바이더는 react-redux 라이브러리에 내장되어있다.
 - 프로바이더는 리액트 앱에 store를 손쉽게 연동할 수 있도록 도와준다. 
-- 프로바이더로 연동할 컴포는트를 감싸준 다음에, props로 store 값을 설정해준다. 
+- 프로바이더로 연동할 컴포넌트를 감싸준 다음에, props로 store 값을 설정해준다. 
+
+```react
+ReactDOM.render(
+    <Provider store={store}>
+        <App/>
+    </Provider>,
+    document.getElementById('root')
+);
+```
 
 
 
@@ -55,6 +181,13 @@
 - mapStateToProps : 상태를 연결
 - mapDispatchToProps : 액션함수를 연결
 - connect : 이 둘을 묶어준다. 
+
+```javascript
+const CounterContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Counter);
+```
 
 
 
