@@ -201,6 +201,33 @@ redux 의 combineReducers 라는 녀석으로 이 둘을 묶는다.
 
 
 
+---
+
+
+
+## 멀티 카운터 만들기
+
+#### 리덕스 개발자 도구
+
+```react
+const store = createStore(reducers, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+```
+
+윈도우에 리덕스 개발툴 익스텐션이 있다면, 이걸 실행하라는 코드임.
+
+
+
+#### 리듀서에서 추가 삭제 구현
+
+```react
+counters: counter.slice(0, counters.length) -1
+```
+
+- 맨 마지막 카운터를 제외, 
+- 이 예제는 버튼을 눌러서 맨마지막꺼를 제거하는 로직이기 때문에 이렇게 구현한 것이고, 다른 경우에는 제거할 인덱스를 받아서 밀어넣어줘야 함.
+
+
+
 #### Proptypes
 
 - 타입을 체크하기 위한 기능
