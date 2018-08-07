@@ -189,6 +189,16 @@ const CounterContainer = connect(
 )(Counter);
 ```
 
+- 왜? 둘을 꼭 묶어야 하나? 이런식으로 되어야할 필연적인 이유가 있나?
+
+
+
+### Reducer 쪼개기 : 서브리듀서 만들기
+
+색상에 관련된 액션은 색상대로, 숫자에 대한 액션은 숫자대로 나눈다. 
+
+redux 의 combineReducers 라는 녀석으로 이 둘을 묶는다.
+
 
 
 #### Proptypes
